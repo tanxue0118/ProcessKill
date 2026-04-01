@@ -1,5 +1,13 @@
 # ProcessKill
 
+<div align="center">
+  [![Shell](https://img.shields.io/badge/Shell-sh-brightgreen)](./processkill.sh)
+[![Platform](https://img.shields.io/badge/Platform-Android-3DDC84)]()
+[![Module](https://img.shields.io/badge/Module-Magisk%20%7C%20KernelSU%20%7C%20APatch-blue)]()
+[![License](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
+[![Stars](https://img.shields.io/github/stars/yourname/ProcessKill?style=social)](https://github.com/yourname/ProcessKill)
+[![Last Commit](https://img.shields.io/github/last-commit/yourname/ProcessKill)](https://github.com/yourname/ProcessKill)
+</div>
 > A lightweight Android background process suppression script for Magisk / KernelSU / APatch modules.
 
 `ProcessKill` 是一个面向 Android 模块环境的轻量级 Shell 守护脚本，  
