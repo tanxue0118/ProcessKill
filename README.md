@@ -1,102 +1,91 @@
+<div align="center">
+
 # ProcessKill
 
-<div align="center">
-  [![Shell](https://img.shields.io/badge/Shell-sh-brightgreen)](./processkill.sh)
+**A lightweight Android background process suppression daemon script**  
+**适用于 Magisk / KernelSU / APatch 模块环境的轻量级后台进程压制脚本**
+
+[![Shell](https://img.shields.io/badge/Shell-sh-brightgreen)](./processkill.sh)
 [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84)]()
 [![Module](https://img.shields.io/badge/Module-Magisk%20%7C%20KernelSU%20%7C%20APatch-blue)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
 [![Stars](https://img.shields.io/github/stars/yourname/ProcessKill?style=social)](https://github.com/yourname/ProcessKill)
 [![Last Commit](https://img.shields.io/github/last-commit/yourname/ProcessKill)](https://github.com/yourname/ProcessKill)
+
 </div>
-> A lightweight Android background process suppression script for Magisk / KernelSU / APatch modules.
-
-`ProcessKill` 是一个面向 Android 模块环境的轻量级 Shell 守护脚本，  
-用于周期性扫描系统进程，并基于 `oom_score_adj`、黑白名单、前台应用保护、后台 cpuset 等规则，对符合条件的后台进程进行压制与清理。
-
-它的目标不是“无脑全杀”，而是提供一种**可配置、可热重载、偏保守策略**的后台进程管理方案。
 
 ---
 
-## ✨ Features
+## 📖 Overview
 
-- **守护进程模式**
-  - 自动检测自身是否已运行，避免重复启动
-  - 启动后自动转为 daemon 常驻
+`ProcessKill` 是一个面向 Android 模块环境设计的 Shell 守护脚本，用于周期性扫描系统进程，并根据一套可配置规则，对符合条件的后台进程进行压制或清理。
 
-- **开机完成后延迟启动**
-  - 等待 `sys.boot_completed=1`
-  - 避免在系统启动早期干扰关键服务
+与简单粗暴的“全杀后台”不同，`ProcessKill` 更强调：
 
-- **可配置压制策略**
-  - 支持 `oom_score_adj` 阈值控制
-  - 支持常规模式 / 深度压制模式
-  - 支持轮询间隔、日志保留行数等参数调整
+- **可配置**
+- **可热重载**
+- **可追踪**
+- **默认保守**
+- **尽可能降低前台干扰**
 
-- **黑白名单机制**
-  - 白名单进程跳过常规压制
-  - 黑名单进程后台直接强杀
-  - 支持主进程与子进程名匹配
+它主要通过以下信息进行判断：
 
-- **前台应用保护**
-  - 自动识别当前前台应用
-  - 保护前台包及其相关子进程，避免误杀正在使用的应用
-
-- **动态热重载**
-  - 配置文件与黑白名单文件变更后自动重载
-  - 无需手动重启脚本
-
-- **日志记录与自动裁剪**
-  - 输出每轮压制摘要
-  - 可选详细 kill 日志
-  - 自动控制日志文件大小
-
-- **轻依赖**
-  - 纯 Shell 实现
-  - 主要依赖 Android 常见命令与 `/proc`
+- `/proc/[pid]/cmdline`
+- `/proc/[pid]/oom_score_adj`
+- `/proc/[pid]/cpuset`
+- `dumpsys` 获取的前台应用信息
+- 用户配置的黑白名单
 
 ---
 
-## 📌 Use Cases
+## ✨ Highlights
 
-适合以下场景：
-
-- 希望压制部分 Android 后台子进程
-- 希望通过 Magisk / KernelSU / APatch 模块实现长期后台管理
-- 希望通过黑白名单进行精细化控制
-- 希望在尽量不影响前台体验的前提下减少后台驻留
+- 守护进程自管理，避免重复启动
+- 开机完成后延迟运行，减少系统初始化阶段干扰
+- 支持黑名单 / 白名单
+- 支持前台应用保护
+- 支持 OOM 阈值控制
+- 支持深度压制模式
+- 支持运行中热重载配置
+- 支持日志记录与自动裁剪
+- 纯 Shell 实现，结构简单，便于二次修改
 
 ---
 
-## 🧠 How It Works
+## 📚 Table of Contents
 
-脚本启动后，整体流程如下：
+- [Overview](#-overview)
+- [Features](#-features)
+- [How It Works](#-how-it-works)
+- [Project Structure](#-project-structure)
+- [Configuration](#-configuration)
+- [Configuration Reference](#-configuration-reference)
+- [Blacklist / Whitelist](#-blacklist--whitelist)
+- [Rule Priority](#-rule-priority)
+- [Foreground App Protection](#-foreground-app-protection)
+- [Logging](#-logging)
+- [Hot Reload](#-hot-reload)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Recommended Settings](#-recommended-settings)
+- [Compatibility](#-compatibility)
+- [FAQ](#-faq)
+- [Roadmap](#-roadmap)
+- [Disclaimer](#-disclaimer)
+- [License](#-license)
 
-```text
-启动脚本
-  └─ 检查是否已有 processkill 守护实例
-      ├─ 已存在 → 直接退出
-      └─ 不存在 → 以 daemon 方式拉起自身
+---
 
-等待系统启动完成
-  └─ sys.boot_completed = 1
+## 🚀 Features
 
-初始化运行环境
-  ├─ 创建默认配置文件
-  ├─ 创建默认黑白名单文件
-  ├─ 创建日志文件
-  └─ 绑定 CPU 亲和性（尝试绑定到 CPU 0/1）
+### 1. Daemonized Self-Management
+脚本启动时会先检查系统中是否已存在名为 `processkill` 的守护实例。  
+如果已存在，则直接退出；如果不存在，则自动以 daemon 方式重新拉起自身，避免重复运行。
 
-加载配置与名单
-  ├─ 读取 配置文件.txt
-  └─ 读取 黑白名单.txt
+---
 
-启动文件监控线程
-  └─ 监控配置文件和名单文件修改时间
+### 2. Boot Completion Awareness
+脚本不会在系统刚开机时立即压制后台，而是先等待：
 
-进入主循环
-  ├─ 获取前台应用
-  ├─ 扫描 /proc/[pid]
-  ├─ 判断黑名单 / 白名单 / 前台保护 / OOM 阈值 / 深度压制
-  ├─ kill -9 符合条件的目标进程
-  ├─ 写入日志
-  └─ 定时裁剪日志
+```sh
+getprop sys.boot_completed
