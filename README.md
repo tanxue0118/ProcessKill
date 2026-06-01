@@ -7,6 +7,8 @@
 
 它的目标不是“无脑全杀”，而是提供一种**可配置、可热重载、偏保守策略**的后台进程管理方案。
 
+目前已经推出捐赠版[捐赠版](https://github.com/tanxue0118/Processkill-Donation)
+
 ---
 
 ## ✨ Features
