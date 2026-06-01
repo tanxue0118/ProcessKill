@@ -1,0 +1,6 @@
+id=Process_Kill
+name=进程kill
+version=260501
+versionCode=260501
+author=一直做梦的猫
+description=智能压制后台进程，进程名为processkill，目前用shell写，会在模块目录下生成日志，刷入后自动正常配置文件和黑白名单，支持实时修改，日志会自动清理，可自行查看｜累计压制:0

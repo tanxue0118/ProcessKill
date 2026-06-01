@@ -1,0 +1,14 @@
+# 黑白名单配置文件 
+# 正常填写包名代表【白名单】
+# 在包名前加 ! 号代表【黑名单】
+# 注意：即使是黑名单，在前台时也会受到保护免杀
+
+# 白名单示例
+com.tencent.mm
+com.tencent.mm:push
+com.tencent.mobileqq
+com.tencent.mobileqq:MSF
+com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:*
+
+# 黑名单示例（只要在后台，无视OOM，发现即杀）
+#!com.example.badapp(需要去掉#)
