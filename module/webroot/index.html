@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProcessKill 控制面板</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="header card">
+        <div>
+          <h1>ProcessKill</h1>
+          <p>后台压制模块控制面板</p>
+        </div>
+        <button class="btn primary" id="refreshAllBtn">刷新</button>
+      </header>
+
+      <section class="grid">
+        <div class="card">
+          <div class="label">运行状态</div>
+          <div class="runline">
+            <span id="runDot" class="dot fail"></span>
+            <span id="runText">检查中...</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="label">轮询间隔</div>
+          <div class="value"><span id="pollInterval">-</span> 秒</div>
+        </div>
+
+        <div class="card">
+          <div class="label">累计压制</div>
+          <div class="value" id="totalKill">0</div>
+        </div>
+
+        <div class="card mem-card">
+          <div class="label">内存占用</div>
+          <div class="mem-wrap">
+            <svg width="110" height="110" viewBox="0 0 110 110" class="ring">
+              <circle cx="55" cy="55" r="46" class="ring-bg"></circle>
+              <circle
+                cx="55"
+                cy="55"
+                r="46"
+                class="ring-fg"
+                id="memRing"
+              ></circle>
+            </svg>
+            <div class="mem-text" id="memPercent">0%</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>配置文件</h2>
+          <button class="btn" id="saveConfigBtn">保存配置</button>
+        </div>
+        <textarea id="configBox" spellcheck="false"></textarea>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>黑白名单</h2>
+          <button class="btn" id="saveListBtn">保存名单</button>
+        </div>
+        <textarea id="listBox" spellcheck="false"></textarea>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>日志</h2>
+          <div class="actions">
+            <label class="lines">
+              行数
+              <input id="logLines" type="number" min="50" max="5000" value="200" />
+            </label>
+            <button class="btn" id="reloadLogBtn">刷新日志</button>
+            <button class="btn danger" id="clearLogBtn">清空日志</button>
+          </div>
+        </div>
+        <pre id="logBox"></pre>
+      </section>
+
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
